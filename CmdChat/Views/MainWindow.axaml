@@ -1,0 +1,85 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:CmdChat.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:cmdChat="clr-namespace:CmdChat"
+        xmlns:controls="clr-namespace:CmdChat.Controls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CmdChat.Views.MainWindow"
+        Title="CmdChat">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+
+
+    <Grid ColumnDefinitions="240, *">
+
+        <Grid Grid.Column="0" RowDefinitions="Auto,*">
+            <StackPanel Grid.Row="0">
+                <Label>User Id</Label>
+                <TextBox Watermark="12345678" x:Name="TbId" />
+                <Button HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Command="{Binding AddUserCommand}">
+                    <Button.CommandParameter>
+                        <Binding ElementName="TbId" Path="Text" />
+                    </Button.CommandParameter>
+                    <DockPanel>
+                        <TextBlock>Add Friend</TextBlock>
+                        <TextBlock HorizontalAlignment="Right" Text="+" />
+                    </DockPanel>
+                </Button>
+            </StackPanel>
+
+
+            <ListBox Grid.Row="1" Items="{Binding Contacts}" x:Name="LbContacts" SelectedItem="{Binding SelectedUser}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <DockPanel>
+                                <TextBlock Text="{Binding Name}" />
+                                <controls:OnLineIndicator Status="{Binding Status}" HorizontalAlignment="Right" />
+                            </DockPanel>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+
+
+        <!-- TODO Two grids here, one for the DMS, and one for showing a friends menu -->
+        <Grid Grid.Column="1" RowDefinitions="Auto,*,Auto">
+            <Grid Grid.Row="0" Background="{DynamicResource ButtonBackground}">
+                <TextBlock Foreground="{DynamicResource ButtonForeground}">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}{0} ({1})">
+                            <Binding ElementName="LbContacts" Path="SelectedItem.Name" FallbackValue="No User" />
+                            <Binding ElementName="LbContacts" Path="SelectedItem.Status" FallbackValue="~Unknown~" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+            </Grid>
+
+
+            <ListBox Grid.Row="1" Items="{Binding ElementName=LbContacts, Path=SelectedItem.DirectMessages}">
+                <ListBox.DataTemplates>
+                    <DataTemplate>
+                        <DockPanel>
+                            <TextBlock FontWeight="ExtraLight" FontSize="8" VerticalAlignment="Center"
+                                       Text="{Binding Timestamp}" Margin="0,0,10,0" />
+                            <TextBlock FontWeight="Bold" Text="{Binding Sender.Name}" Margin="0,0,10,0" />
+                            <TextBlock Text="{Binding  MessageText}" />
+                        </DockPanel>
+                    </DataTemplate>
+                </ListBox.DataTemplates>
+            </ListBox>
+
+            <Grid Grid.Row="2" x:Name="TextEntryGrid" ColumnDefinitions="*,Auto">
+                <TextBox Grid.Column="0" Text="{Binding MessageDraftText}"
+                         Watermark="{Binding ElementName=LbContacts, Path=SelectedItem.Name,FallbackValue=Select A Friend to message, StringFormat=Send message to {0}}" />
+                <Button Grid.Column="1" Content="Send" Command="{Binding SendMessageCommand}" />
+            </Grid>
+
+        </Grid>
+    </Grid>
+</Window>

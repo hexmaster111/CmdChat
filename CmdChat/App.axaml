@@ -1,0 +1,25 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:CmdChat"
+             x:Class="CmdChat.App">
+    <Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>
+
+    <Application.Resources>
+        <local:OnlineStatusToColorConverter x:Key="OnLineToBrushConverter">
+            <local:OnlineStatusToColorConverter.EnumValueToValueMap>
+                <local:StatusColorMap EnumValue="Away" Value="Yellow"/>
+                <local:StatusColorMap EnumValue="Busy" Value="Red"/>
+                <local:StatusColorMap EnumValue="Dnd" Value="DarkRed"/>
+                <local:StatusColorMap EnumValue="Invisible" Value="Gray"/>
+                <local:StatusColorMap EnumValue="Offline" Value="Gray"/>
+                <local:StatusColorMap EnumValue="Online" Value="Green"/>
+            </local:OnlineStatusToColorConverter.EnumValueToValueMap>
+        </local:OnlineStatusToColorConverter>
+    </Application.Resources>
+    
+    <Application.Styles>
+        <FluentTheme Mode="Dark"/>
+    </Application.Styles>
+</Application>
